@@ -5,7 +5,7 @@
 [![Release](https://github-release-version.herokuapp.com/github/go-ego/cedar-go/release.svg?style=flat)](https://github.com/go-ego/cedar-go/releases/latest)
 [![Join the chat at https://gitter.im/go-ego/ego](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-ego/ego?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Package `cedar-go` implementes double-array trie.
+Package `cedar-go` implementes double-array trie, base on [cedar-go](https://github.com/adamzy/cedar-go).
 
 It is a [Golang](https://golang.org/) port of [cedar](http://www.tkl.iis.u-tokyo.ac.jp/~ynaga/cedar) which is written in C++ by Naoki Yoshinaga. `cedar-go` currently implements the `reduced` verion of cedar. 
 This package is not thread safe if there is one goroutine doing insertions or deletions. 
