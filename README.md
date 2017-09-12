@@ -1,11 +1,11 @@
-# cedar-go 
+# cedar 
 [![Build Status](https://travis-ci.org/go-ego/cedar.svg)](https://travis-ci.org/go-ego/cedar)
 [![Go Report Card](https://goreportcard.com/badge/github.com/go-ego/cedar)](https://goreportcard.com/report/github.com/go-ego/cedar)
 [![GoDoc](https://godoc.org/github.com/go-ego/cedar?status.svg)](https://godoc.org/github.com/go-ego/cedar)
 [![Release](https://github-release-version.herokuapp.com/github/go-ego/cedar/release.svg?style=flat)](https://github.com/go-ego/cedar/releases/latest)
 [![Join the chat at https://gitter.im/go-ego/ego](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/go-ego/ego?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Package `cedar-go` implementes double-array trie, base on [cedar-go](https://github.com/adamzy/cedar-go).
+Package `cedar` implementes double-array trie, base on [cedar-go](https://github.com/adamzy/cedar-go).
 
 It is a [Golang](https://golang.org/) port of [cedar](http://www.tkl.iis.u-tokyo.ac.jp/~ynaga/cedar) which is written in C++ by Naoki Yoshinaga. `cedar-go` currently implements the `reduced` verion of cedar. 
 This package is not thread safe if there is one goroutine doing insertions or deletions. 
@@ -86,3 +86,6 @@ id	key:value
 309	姑苏城外:5
 318	姑苏城外寒山寺:6
 ```
+## License
+
+Under the GPL-3.0 License.
