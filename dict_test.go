@@ -14,9 +14,11 @@ type item struct {
 	value int
 }
 
-var dict []item
+var (
+	dict []item
 
-var trie = New()
+	trie = New()
+)
 
 func loadDict() {
 	f, err := os.Open("testdata/dict.txt")

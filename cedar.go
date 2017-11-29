@@ -1,6 +1,7 @@
 package cedar
 
 const (
+	// ValueLimit limit value
 	ValueLimit = int(^uint(0) >> 1)
 )
 
@@ -24,6 +25,7 @@ func (b *block) init() {
 	b.Reject = 257
 }
 
+// Cedar cedar struct
 type Cedar struct {
 	*cedar
 }
@@ -42,6 +44,7 @@ type cedar struct {
 	MaxTrial int
 }
 
+// New new cedar
 func New() *Cedar {
 	da := cedar{
 		Array:    make([]node, 256),
