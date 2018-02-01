@@ -39,7 +39,8 @@ func Example() {
 
 func Example_prefixMatch() {
 	fmt.Println("id\tkey:value")
-	for _, id := range trie.PrefixMatch([]byte("How many loved your moments of glad grace"), 0) {
+	for _, id := range trie.PrefixMatch(
+		[]byte("How many loved your moments of glad grace"), 0) {
 		key, _ := trie.Key(id)
 		value, _ := trie.Value(id)
 		fmt.Printf("%d\t%s:%v\n", id, key, value)
