@@ -10,7 +10,9 @@ type node struct {
 	Check int
 }
 
-func (n *node) base() int { return -(n.Value + 1) }
+func (n *node) base() int {
+	return -(n.Value + 1)
+}
 
 type ninfo struct {
 	Sibling, Child byte
@@ -92,6 +94,7 @@ func (da *cedar) get(key []byte, from, pos int) *int {
 func (da *cedar) follow(from int, label byte) int {
 	base := da.Array[from].base()
 	to := base ^ int(label)
+
 	if base < 0 || da.Array[to].Check < 0 {
 		hasChild := false
 		if base >= 0 {
@@ -99,25 +102,34 @@ func (da *cedar) follow(from int, label byte) int {
 		}
 		to = da.popEnode(base, label, from)
 		da.pushSibling(from, to^int(label), label, hasChild)
-	} else if da.Array[to].Check != from {
-		to = da.resolve(from, base, label)
-	} else if da.Array[to].Check == from {
-	} else {
-		panic("cedar: internal error, should not be here")
+
+		return to
 	}
-	return to
+
+	if da.Array[to].Check != from {
+		to = da.resolve(from, base, label)
+		return to
+	}
+
+	if da.Array[to].Check == from {
+		return to
+	}
+
+	panic("cedar: internal error, should not be here")
+	// return to
 }
 
 func (da *cedar) popBlock(bi int, headIn *int, last bool) {
 	if last {
 		*headIn = 0
-	} else {
-		b := &da.Blocks[bi]
-		da.Blocks[b.Prev].Next = b.Next
-		da.Blocks[b.Next].Prev = b.Prev
-		if bi == *headIn {
-			*headIn = b.Next
-		}
+		return
+	}
+
+	b := &da.Blocks[bi]
+	da.Blocks[b.Prev].Next = b.Next
+	da.Blocks[b.Next].Prev = b.Prev
+	if bi == *headIn {
+		*headIn = b.Next
 	}
 }
 

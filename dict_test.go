@@ -30,9 +30,11 @@ func loadDict() {
 	in := bufio.NewReader(f)
 
 	added := make(map[string]struct{})
-	var key string
-	var freq int
-	var pos string
+	var (
+		key  string
+		freq int
+		pos  string
+	)
 	for {
 		_, err := fmt.Fscanln(in, &key, &freq, &pos)
 		if err == io.EOF {
