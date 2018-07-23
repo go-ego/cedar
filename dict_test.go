@@ -25,16 +25,17 @@ func loadDict() {
 	if err != nil {
 		panic("failed to open testdata/dict.txt")
 	}
-
 	defer f.Close()
-	in := bufio.NewReader(f)
 
+	in := bufio.NewReader(f)
 	added := make(map[string]struct{})
+
 	var (
 		key  string
 		freq int
 		pos  string
 	)
+
 	for {
 		_, err := fmt.Fscanln(in, &key, &freq, &pos)
 		if err == io.EOF {
@@ -47,39 +48,37 @@ func loadDict() {
 	}
 }
 
-func TestLargeDict(t *testing.T) {
-	loadDict()
-	size := len(dict)
-	log.Println("dict size:", size)
+func exist(i int) {
+	item := dict[i]
+	// fmt.Println(i, string(item.key))
+	id, err := trie.Jump(item.key, 0)
+	failIfError(err)
+	key, err := trie.Key(id)
+	failIfError(err)
+	value, err := trie.Value(id)
+	failIfError(err)
+	if string(key) != string(item.key) || value != item.value {
+		v, _ := trie.Get(item.key)
+		fmt.Println(i, string(key), string(item.key), value, item.value, v)
+		panic("large dict test fail: no equal")
+	}
+}
 
-	exist := func(i int) {
-		item := dict[i]
-		// fmt.Println(i, string(item.key))
-		id, err := trie.Jump(item.key, 0)
-		failIfError(err)
-		key, err := trie.Key(id)
-		failIfError(err)
-		value, err := trie.Value(id)
-		failIfError(err)
-		if string(key) != string(item.key) || value != item.value {
-			v, _ := trie.Get(item.key)
-			fmt.Println(i, string(key), string(item.key), value, item.value, v)
-			panic("large dict test fail: no equal")
-		}
+func notExist(i int) {
+	_, err := trie.Get(dict[i].key)
+	// fmt.Println(i, err)
+	if err != ErrNoPath && err != ErrNoValue {
+		panic("large dict test fail: should not exist")
 	}
-	notExist := func(i int) {
-		_, err := trie.Get(dict[i].key)
-		// fmt.Println(i, err)
-		if err != ErrNoPath && err != ErrNoValue {
-			panic("large dict test fail: should not exist")
-		}
-	}
-	checkSize := func(exp int) {
-		if keys, _, _, _ := trie.Status(); keys != exp {
-			panic("not correct status")
-		}
-	}
+}
 
+func checkSize(exp int) {
+	if keys, _, _, _ := trie.Status(); keys != exp {
+		panic("not correct status")
+	}
+}
+
+func insertF(size int) {
 	// Insert the first half of the dict.
 	for i := 0; i < size/2; i++ {
 		item := dict[i]
@@ -94,7 +93,9 @@ func TestLargeDict(t *testing.T) {
 		}
 	}
 	checkSize(size / 2)
+}
 
+func checkDict(size int) {
 	// Check the first half of the dict.
 	for i := 0; i < size/2; i++ {
 		exist(i)
@@ -124,7 +125,9 @@ func TestLargeDict(t *testing.T) {
 		trie.Insert(item.key, item.value)
 	}
 	checkSize(size/2/2 + (size - size/2))
+}
 
+func odd(size int) {
 	for i := 0; i < size/2; i++ {
 		if i%2 == 0 {
 			notExist(i)
@@ -152,14 +155,16 @@ func TestLargeDict(t *testing.T) {
 		}
 	}
 	log.Println("odd OK")
+}
 
+func even(size int) {
 	// Insert all even terms.
 	for i := 0; i < size; i += 2 {
 		item := dict[i]
 		notExist(i)
 		trie.Update([]byte(item.key), item.value)
 	}
-	for i := 0; i < size; i += 1 {
+	for i := 0; i < size; i++ {
 		exist(i)
 	}
 	log.Println("all OK")
@@ -173,6 +178,20 @@ func TestLargeDict(t *testing.T) {
 		exist(i)
 	}
 	log.Println("still OK")
+}
+
+func TestLargeDict(t *testing.T) {
+	loadDict()
+	size := len(dict)
+	log.Println("dict size:", size)
+
+	insertF(size)
+
+	checkDict(size)
+
+	odd(size)
+
+	even(size)
 }
 
 func failIfError(err error) {
