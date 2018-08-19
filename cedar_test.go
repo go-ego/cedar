@@ -2,6 +2,7 @@ package cedar
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"testing"
 )
@@ -12,8 +13,8 @@ var (
 		"a", "aa", "ab", "ac", "abc", "abd",
 		"abcd", "abde", "abdf", "abcdef", "abcde",
 		"abcdefghijklmn", "bcd", "b", "xyz",
-		"中国", "中国北京", "中国上海", "中国广州",
-		"中华", "中华文明", "中华民族", "中华人民共和国",
+		"太阳系", "太阳系土星", "太阳系水星", "太阳系火星",
+		"新星", "新星文明", "新星军团", "新星联邦共和国",
 		"this", "this is", "this is a sentence.",
 	}
 )
@@ -89,8 +90,8 @@ func TestPrefixMatch(t *testing.T) {
 	values = []int{2, 6, 10, 9}
 	check(cd, ids, keys, values)
 
-	ids = cd.PrefixMatch([]byte("中华人民共和国"), 0)
-	keys = []string{"中华", "中华人民共和国"}
+	ids = cd.PrefixMatch([]byte("新星联邦共和国"), 0)
+	keys = []string{"新星", "新星联邦共和国"}
 	values = []int{19, 22}
 	check(cd, ids, keys, values)
 
@@ -102,13 +103,18 @@ func TestPrefixMatch(t *testing.T) {
 
 func check(cd *Cedar, ids []int, keys []string, values []int) {
 	if len(ids) != len(keys) {
-		panic("wrong prefix match")
+		log.Panicf("wrong prefix match: %d, %d", len(ids), len(keys))
 	}
+
 	for i, n := range ids {
 		key, _ := cd.Key(n)
 		val, _ := cd.Value(n)
 		if string(key) != keys[i] || val != values[i] {
-			panic("wrong prefix match")
+			log.Printf("key: %v, value: %v; val:%v, values:%v",
+				string(key), keys[i], val, values[i])
+
+			log.Panicf("wrong prefix match: %v, %v",
+				string(key) != keys[i], val != values[i])
 		}
 	}
 }
@@ -135,16 +141,19 @@ func TestOrder(t *testing.T) {
 }
 
 func TestPrefixPredict(t *testing.T) {
-	var ids []int
-	var keys []string
-	var values []int
-	ids = cd.PrefixPredict([]byte("中华"), 0)
-	keys = []string{"中华", "中华人民共和国", "中华民族"}
-	values = []int{19, 22, 21}
+	var (
+		ids    []int
+		keys   []string
+		values []int
+	)
+
+	ids = cd.PrefixPredict([]byte("新星"), 0)
+	keys = []string{"新星", "新星军团", "新星联邦共和国"}
+	values = []int{19, 21, 22}
 	check(cd, ids, keys, values)
 
-	ids = cd.PrefixPredict([]byte("中国"), 0)
-	keys = []string{"中国", "中国上海", "中国广州"}
+	ids = cd.PrefixPredict([]byte("太阳系"), 0)
+	keys = []string{"太阳系", "太阳系水星", "太阳系火星"}
 	values = []int{15, 17, 18}
 	check(cd, ids, keys, values)
 }
