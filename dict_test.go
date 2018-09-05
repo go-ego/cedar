@@ -78,7 +78,7 @@ func checkSize(exp int) {
 	}
 }
 
-func insertF(size int) {
+func insertDict(size int) {
 	// Insert the first half of the dict.
 	for i := 0; i < size/2; i++ {
 		item := dict[i]
@@ -185,7 +185,7 @@ func TestLargeDict(t *testing.T) {
 	size := len(dict)
 	log.Println("dict size:", size)
 
-	insertF(size)
+	insertDict(size)
 
 	checkDict(size)
 
