@@ -8,7 +8,8 @@ import (
 )
 
 var (
-	cd    *Cedar
+	cd *Cedar
+
 	words = []string{
 		"a", "aa", "ab", "ac", "abc", "abd",
 		"abcd", "abde", "abdf", "abcdef", "abcde",
@@ -65,6 +66,7 @@ func TestSaveAndLoad(t *testing.T) {
 
 	cd.SaveToFile("cedar.gob", "gob")
 	defer os.Remove("cedar.gob")
+
 	daGob := New()
 	if err := daGob.LoadFromFile("cedar.gob", "gob"); err != nil {
 		panic(err)
@@ -81,9 +83,10 @@ func TestSaveAndLoad(t *testing.T) {
 }
 
 func TestPrefixMatch(t *testing.T) {
-	var ids []int
-	var keys []string
-	var values []int
+	var (
+		ids, values []int
+		keys        []string
+	)
 
 	ids = cd.PrefixMatch([]byte("abcdefg"), 0)
 	keys = []string{"ab", "abcd", "abcde", "abcdef"}
@@ -128,10 +131,12 @@ func TestOrder(t *testing.T) {
 	c.Insert([]byte("c"), 5)
 	c.Insert([]byte(""), 0)
 	c.Insert([]byte("bb"), 4)
+
 	ids := c.PrefixPredict([]byte(""), 0)
 	if len(ids) != 7 {
 		panic("wrong order")
 	}
+
 	for i, n := range ids {
 		val, _ := c.Value(n)
 		if i != val {
@@ -165,12 +170,14 @@ func checkConsistency(cd *Cedar) {
 			if err == ErrNoPath {
 				continue
 			}
+
 			_, err := cd.Value(id)
 			if err == ErrNoValue {
 				continue
 			}
 			panic("not deleted")
 		}
+
 		key, err := cd.Key(id)
 		if err != nil {
 			panic(err)
@@ -178,6 +185,7 @@ func checkConsistency(cd *Cedar) {
 		if string(key) != word {
 			panic("key error")
 		}
+
 		value, err := cd.Value(id)
 		if err != nil || value != i {
 			fmt.Println(word, i, value, err)
