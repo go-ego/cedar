@@ -33,13 +33,13 @@ type Cedar struct {
 }
 
 type cedar struct {
-	Array    []node
-	Ninfos   []ninfo
-	Blocks   []block
-	Reject   [257]int
-	BheadF   int
-	BheadC   int
-	BheadO   int
+	Array  []node
+	Ninfos []ninfo
+	Blocks []block
+	Reject [257]int
+
+	BheadF, BheadC, BheadO int
+
 	Capacity int
 	Size     int
 	Ordered  bool
