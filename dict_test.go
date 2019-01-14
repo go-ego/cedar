@@ -41,6 +41,7 @@ func loadDict() {
 		if err == io.EOF {
 			break
 		}
+
 		if _, ok := added[string(key)]; !ok {
 			dict = append(dict, item{[]byte(key), freq})
 			added[string(key)] = struct{}{}
@@ -53,10 +54,13 @@ func exist(i int) {
 	// fmt.Println(i, string(item.key))
 	id, err := trie.Jump(item.key, 0)
 	failIfError(err)
+
 	key, err := trie.Key(id)
 	failIfError(err)
+
 	value, err := trie.Value(id)
 	failIfError(err)
+
 	if string(key) != string(item.key) || value != item.value {
 		v, _ := trie.Get(item.key)
 		fmt.Println(i, string(key), string(item.key), value, item.value, v)
@@ -142,10 +146,12 @@ func odd(size int) {
 	if half%2 == 1 {
 		half++
 	}
+
 	for i := half; i < size; i += 2 {
 		err := trie.Delete(dict[i].key)
 		failIfError(err)
 	}
+
 	// Make sure even items were deleted, and the rest are fine.
 	for i := 0; i < size; i++ {
 		if i%2 == 0 {
@@ -154,6 +160,7 @@ func odd(size int) {
 			exist(i)
 		}
 	}
+
 	log.Println("odd OK")
 }
 
@@ -164,6 +171,7 @@ func even(size int) {
 		notExist(i)
 		trie.Update([]byte(item.key), item.value)
 	}
+
 	for i := 0; i < size; i++ {
 		exist(i)
 	}
@@ -174,6 +182,7 @@ func even(size int) {
 		item := dict[i]
 		trie.Insert([]byte(item.key), item.value)
 	}
+
 	for i := 1; i < size; i += 2 {
 		exist(i)
 	}

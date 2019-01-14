@@ -10,11 +10,13 @@ func (da *Cedar) Status() (keys, nodes, size, capacity int) {
 		n := da.Array[i]
 		if n.Check >= 0 {
 			nodes++
+
 			if n.Value >= 0 {
 				keys++
 			}
 		}
 	}
+
 	return keys, nodes, da.Size, da.Capacity
 }
 
