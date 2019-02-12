@@ -75,6 +75,7 @@ func TestSaveAndLoad(t *testing.T) {
 
 	cd.SaveToFile("cedar.json", "json")
 	defer os.Remove("cedar.json")
+
 	daJson := New()
 	if err := daJson.LoadFromFile("cedar.json", "json"); err != nil {
 		panic(err)
@@ -127,6 +128,7 @@ func TestOrder(t *testing.T) {
 	c.Insert([]byte("a"), 1)
 	c.Insert([]byte("b"), 3)
 	c.Insert([]byte("d"), 6)
+
 	c.Insert([]byte("ab"), 2)
 	c.Insert([]byte("c"), 5)
 	c.Insert([]byte(""), 0)
@@ -182,6 +184,7 @@ func checkConsistency(cd *Cedar) {
 		if err != nil {
 			panic(err)
 		}
+
 		if string(key) != word {
 			panic("key error")
 		}
