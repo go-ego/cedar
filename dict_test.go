@@ -21,9 +21,10 @@ var (
 )
 
 func loadDict() {
-	f, err := os.Open("testdata/dict.txt")
+	testFile := "testdata/dict.txt"
+	f, err := os.Open(testFile)
 	if err != nil {
-		panic("failed to open testdata/dict.txt")
+		log.Fatal("failed to open ", testFile)
 	}
 	defer f.Close()
 
@@ -195,11 +196,9 @@ func TestLargeDict(t *testing.T) {
 	log.Println("dict size:", size)
 
 	insertDict(size)
-
 	checkDict(size)
 
 	odd(size)
-
 	even(size)
 }
 
