@@ -64,7 +64,7 @@ func exist(i int) {
 
 	if string(key) != string(item.key) || value != item.value {
 		v, _ := trie.Get(item.key)
-		fmt.Println(i, string(key), string(item.key), value, item.value, v)
+		fmt.Println("exit: ", i, string(key), string(item.key), value, item.value, v)
 		panic("large dict test fail: no equal")
 	}
 }
