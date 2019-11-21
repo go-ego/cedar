@@ -55,6 +55,56 @@ func loadTestData() {
 	return
 }
 
+func check(cd *Cedar, ids []int, keys []string, values []int) {
+	if len(ids) != len(keys) {
+		log.Panicf("wrong prefix match: %d, %d", len(ids), len(keys))
+	}
+
+	for i, n := range ids {
+		key, _ := cd.Key(n)
+		val, _ := cd.Value(n)
+		if string(key) != keys[i] || val != values[i] {
+			log.Printf("key: %v, value: %v; val:%v, values:%v",
+				string(key), keys[i], val, values[i])
+
+			log.Panicf("wrong prefix match: %v, %v",
+				string(key) != keys[i], val != values[i])
+		}
+	}
+}
+
+func checkConsistency(cd *Cedar) {
+	for i, word := range words {
+		id, err := cd.Jump([]byte(word), 0)
+		if i%4 == 0 {
+			if err == ErrNoPath {
+				continue
+			}
+
+			_, err := cd.Value(id)
+			if err == ErrNoValue {
+				continue
+			}
+			panic("not deleted")
+		}
+
+		key, err := cd.Key(id)
+		if err != nil {
+			panic(err)
+		}
+
+		if string(key) != word {
+			panic("key error")
+		}
+
+		value, err := cd.Value(id)
+		if err != nil || value != i {
+			fmt.Println(word, i, value, err)
+			panic("value error")
+		}
+	}
+}
+
 func TestBasic(t *testing.T) {
 	loadTestData()
 	// check the consistency
@@ -105,24 +155,6 @@ func TestPrefixMatch(t *testing.T) {
 	check(cd, ids, keys, values)
 }
 
-func check(cd *Cedar, ids []int, keys []string, values []int) {
-	if len(ids) != len(keys) {
-		log.Panicf("wrong prefix match: %d, %d", len(ids), len(keys))
-	}
-
-	for i, n := range ids {
-		key, _ := cd.Key(n)
-		val, _ := cd.Value(n)
-		if string(key) != keys[i] || val != values[i] {
-			log.Printf("key: %v, value: %v; val:%v, values:%v",
-				string(key), keys[i], val, values[i])
-
-			log.Panicf("wrong prefix match: %v, %v",
-				string(key) != keys[i], val != values[i])
-		}
-	}
-}
-
 func TestOrder(t *testing.T) {
 	c := New()
 	c.Insert([]byte("a"), 1)
@@ -163,36 +195,4 @@ func TestPrefixPredict(t *testing.T) {
 	keys = []string{"太阳系", "太阳系水星", "太阳系火星"}
 	values = []int{15, 17, 18}
 	check(cd, ids, keys, values)
-}
-
-func checkConsistency(cd *Cedar) {
-	for i, word := range words {
-		id, err := cd.Jump([]byte(word), 0)
-		if i%4 == 0 {
-			if err == ErrNoPath {
-				continue
-			}
-
-			_, err := cd.Value(id)
-			if err == ErrNoValue {
-				continue
-			}
-			panic("not deleted")
-		}
-
-		key, err := cd.Key(id)
-		if err != nil {
-			panic(err)
-		}
-
-		if string(key) != word {
-			panic("key error")
-		}
-
-		value, err := cd.Value(id)
-		if err != nil || value != i {
-			fmt.Println(word, i, value, err)
-			panic("value error")
-		}
-	}
 }
