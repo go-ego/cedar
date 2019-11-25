@@ -51,3 +51,27 @@ func BenchmarkValue(t *testing.B) {
 
 	tt.BM(t, fn)
 }
+
+func BenchmarkUpdate(t *testing.B) {
+	fn := func() {
+		cd.Update([]byte("a"), 1)
+	}
+
+	tt.BM(t, fn)
+}
+
+func BenchmarkDelete(t *testing.B) {
+	fn := func() {
+		cd.Delete([]byte("b"))
+	}
+
+	tt.BM(t, fn)
+}
+
+func BenchmarkPrefixPredict(t *testing.B) {
+	fn := func() {
+		cd.PrefixPredict([]byte("abcdefg"), 0)
+	}
+
+	tt.BM(t, fn)
+}
