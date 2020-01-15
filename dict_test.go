@@ -20,7 +20,7 @@ var (
 	trie = New()
 )
 
-func loadDict() {
+func loadDict() []item {
 	testFile := "testdata/dict.txt"
 	f, err := os.Open(testFile)
 	if err != nil {
@@ -48,6 +48,8 @@ func loadDict() {
 			added[string(key)] = struct{}{}
 		}
 	}
+
+	return dict
 }
 
 func exist(i int) {
