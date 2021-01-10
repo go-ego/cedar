@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"testing"
+
+	"github.com/vcaesar/tt"
 )
 
 var (
@@ -52,7 +54,6 @@ func loadTestData() {
 			panic(err)
 		}
 	}
-	return
 }
 
 func check(cd *Cedar, ids []int, keys []string, values []int) {
@@ -114,7 +115,8 @@ func TestBasic(t *testing.T) {
 func TestSaveAndLoad(t *testing.T) {
 	loadTestData()
 
-	cd.SaveToFile("cedar.gob", "gob")
+	err := cd.SaveToFile("cedar.gob", "gob")
+	tt.Nil(t, err)
 	defer os.Remove("cedar.gob")
 
 	daGob := New()
@@ -123,7 +125,8 @@ func TestSaveAndLoad(t *testing.T) {
 	}
 	checkConsistency(daGob)
 
-	cd.SaveToFile("cedar.json", "json")
+	err = cd.SaveToFile("cedar.json", "json")
+	tt.Nil(t, err)
 	defer os.Remove("cedar.json")
 
 	daJson := New()
@@ -157,14 +160,21 @@ func TestPrefixMatch(t *testing.T) {
 
 func TestOrder(t *testing.T) {
 	c := New()
-	c.Insert([]byte("a"), 1)
-	c.Insert([]byte("b"), 3)
-	c.Insert([]byte("d"), 6)
+	err := c.Insert([]byte("a"), 1)
+	tt.Nil(t, err)
+	err = c.Insert([]byte("b"), 3)
+	tt.Nil(t, err)
+	err = c.Insert([]byte("d"), 6)
+	tt.Nil(t, err)
 
-	c.Insert([]byte("ab"), 2)
-	c.Insert([]byte("c"), 5)
-	c.Insert([]byte(""), 0)
-	c.Insert([]byte("bb"), 4)
+	err = c.Insert([]byte("ab"), 2)
+	tt.Nil(t, err)
+	err = c.Insert([]byte("c"), 5)
+	tt.Nil(t, err)
+	err = c.Insert([]byte(""), 0)
+	tt.Nil(t, err)
+	err = c.Insert([]byte("bb"), 4)
+	tt.Nil(t, err)
 
 	ids := c.PrefixPredict([]byte(""), 0)
 	if len(ids) != 7 {
