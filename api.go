@@ -102,6 +102,19 @@ func (da *Cedar) Insert(key []byte, value int) error {
 	return nil
 }
 
+// InsertIn adds a key-value pair into the cedar.
+// It will return ErrInvalidValue, if value < 0 or >= valueLimit.
+func (da *Cedar) InsertIn(key []byte, value interface{}) error {
+	k := da.vKey()
+	klen := len(key)
+	p := da.getV(key, 0, 0)
+
+	da.Array[p].Value = k
+	da.Ninfos[p].End = true
+	da.vals[k] = nvalue{Len: klen, Value: value}
+	return nil
+}
+
 // Update increases the value associated with the `key`.
 // The `key` will be inserted if it is not in the cedar.
 // It will return ErrInvalidValue, if the updated value < 0 or >= ValueLimit.

@@ -14,8 +14,14 @@ func (n *node) base() int {
 	return -(n.Value + 1)
 }
 
+type nvalue struct {
+	Len   int
+	Value interface{}
+}
+
 type ninfo struct {
 	Sibling, Child byte
+	End            bool
 }
 
 type block struct {
@@ -34,6 +40,9 @@ type Cedar struct {
 	Blocks []block
 	Reject [257]int
 
+	vals map[int]nvalue
+	vkey int
+
 	BheadF, BheadC, BheadO int
 
 	Capacity int
@@ -48,6 +57,8 @@ func New() *Cedar {
 		Array:    make([]node, 256),
 		Ninfos:   make([]ninfo, 256),
 		Blocks:   make([]block, 1),
+		vals:     make(map[int]nvalue),
+		vkey:     1,
 		Capacity: 256,
 		Size:     256,
 		Ordered:  true,
@@ -93,6 +104,19 @@ func (da *Cedar) getV(key []byte, from, pos int) int {
 	}
 
 	return to
+}
+
+func (da *Cedar) vKey() int {
+	k := da.vkey
+	for {
+		k = (k + 1) % da.Capacity
+		if _, ok := da.vals[k]; !ok {
+			break
+		}
+	}
+
+	da.vkey = k
+	return k
 }
 
 func (da *Cedar) follow(from int, label byte) int {
